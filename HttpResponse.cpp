@@ -159,15 +159,44 @@ namespace http {
             }
         }
 
+        HttpResponse::HttpResponse() {
+            headers_.resize(2);
+        }
+
+        std::vector<Header> HttpResponse::getHeaders() const {
+            return headers_;
+        }
+
+        std::string HttpResponse::getContent() const {
+            return content_;
+        }
+
+        StatusType HttpResponse::getStatus() const {
+            return status_;
+        }
+
+        void HttpResponse::setHeader(Header header, int i) {
+            headers_[i] = header;
+        }
+
+        void HttpResponse::addHeader(Header header) {
+            headers_.push_back(header);
+        }
+
+        void HttpResponse::setStatus(StatusType status) {
+            status_ = status;
+        }
+
+        void HttpResponse::setContent(std::string content) {
+            content_ = content;
+        }
+
         HttpResponse HttpResponse::stockReply(StatusType status) {
             HttpResponse resp;
-            resp.status = status;
-            resp.content = stock_replies::toString(status);
-            resp.headers.resize(2);
-            resp.headers[0].name = "Content-Length";
-            resp.headers[0].value = std::to_string(resp.content.size());
-            resp.headers[1].name = "Content-Type";
-            resp.headers[1].value = "text/html";
+            resp.setStatus(status);
+            resp.setContent(stock_replies::toString(status));
+            resp.setHeader(Header("Content-Length", std::to_string(resp.getContent().size())), 0);
+            resp.setHeader(Header("Content-Type", "text/html"), 1);
 
             return resp;
         }

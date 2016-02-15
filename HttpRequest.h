@@ -11,12 +11,22 @@
 
 namespace http {
     namespace server {
-
         class HttpRequest {
         public:
-            std::string method;
-            std::string url;
-            std::vector<Header> headers;
+            HttpRequest() {}
+            ~HttpRequest() {}
+
+            std::string getMethod() const;
+            std::string getUrl() const;
+            std::vector<Header> getHeaders() const;
+            void setMethod(std::string method);
+            void setUrl(std::string url);
+            void setHeader(Header header, int i);
+            void addHeader(Header header);
+        private:
+            std::string method_;
+            std::string url_;
+            std::vector<Header> headers_;
         };
     }
 }

@@ -14,6 +14,8 @@ namespace http {
     namespace server {
         class HttpResponse {
         public:
+            HttpResponse();
+            ~HttpResponse() {}
             enum StatusType{
                 OK = 200,
                 CREATED = 201,
@@ -31,12 +33,20 @@ namespace http {
                 NOT_IMPLEMENTED = 501,
                 BAD_GATEWAY = 502,
                 SERVICE_UNAVAILABLE = 503
-            } status;
+            };
 
             static HttpResponse stockReply(StatusType status);
-
-            std::vector<Header> headers;
-            std::string content;
+            std::vector<Header> getHeaders() const;
+            std::string getContent() const;
+            StatusType getStatus() const;
+            void setHeader(Header header, int i);
+            void addHeader(Header header);
+            void setContent(std::string content);
+            void setStatus(StatusType status);
+        private:
+            std::vector<Header> headers_;
+            std::string content_;
+            StatusType status_;
         };
     }
 }
