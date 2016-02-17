@@ -11,6 +11,7 @@
 namespace http {
     namespace server {
         struct Header {
+            Header() {}
             Header(std::string name, std::string value)
                 : name(name),
                   value(value)

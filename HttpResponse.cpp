@@ -6,7 +6,7 @@
 
 namespace http {
     namespace server {
-        namespace statusStrings {
+        namespace status_strings {
             const std::string OK =
                     "HTTP/1.0 200 OK\r\n";
             const std::string CREATED =
@@ -39,6 +39,48 @@ namespace http {
                     "HTTP/1.0 502 Bad Gateway\r\n";
             const std::string SERVICE_UNAVAILABLE =
                     "HTTP/1.0 503 Service Unavailable\r\n";
+        }
+
+        namespace misc_strings {
+            const char name_value_separator[] = ": ";
+            const char crlf[] = {'\r', '\n'};
+        }
+
+        const std::string statusToString(HttpResponse::StatusType status) {
+            switch (status) {
+                case HttpResponse::OK:
+                    return status_strings::OK;
+                case HttpResponse::CREATED:
+                    return status_strings::CREATED;
+                case HttpResponse::ACCEPTED:
+                    return status_strings::ACCEPTED;
+                case HttpResponse::NO_CONTENT:
+                    return status_strings::NO_CONTENT;
+                case HttpResponse::MULTIPLE_CHOICES:
+                    return status_strings::MULTIPLE_CHOICES;
+                case HttpResponse::MOVED_PERMANENTLY:
+                    return status_strings::MOVED_PERMANENTLY;
+                case HttpResponse::MOVED_TEMPORARILY:
+                    return status_strings::MOVED_TEMPORARILY;
+                case HttpResponse::NOT_MODIFIED:
+                    return status_strings::NOT_MODIFIED;
+                case HttpResponse::BAD_REQUEST:
+                    return status_strings::BAD_REQUEST;
+                case HttpResponse::UNAUTHORIZED:
+                    return status_strings::UNAUTHORIZED;
+                case HttpResponse::FORBIDDEN:
+                    return status_strings::FORBIDDEN;
+                case HttpResponse::NOT_FOUND:
+                    return status_strings::NOT_FOUND;
+                case HttpResponse::INTERNAL_SERVER_ERROR:
+                    return status_strings::INTERNAL_SERVER_ERROR;
+                case HttpResponse::NOT_IMPLEMENTED:
+                    return status_strings::NOT_IMPLEMENTED;
+                case HttpResponse::BAD_GATEWAY:
+                    return status_strings::BAD_GATEWAY;
+                case HttpResponse::SERVICE_UNAVAILABLE:
+                    return status_strings::SERVICE_UNAVAILABLE;
+            }
         }
 
         namespace stock_replies {
@@ -171,7 +213,7 @@ namespace http {
             return content_;
         }
 
-        StatusType HttpResponse::getStatus() const {
+        HttpResponse::StatusType HttpResponse::getStatus() const {
             return status_;
         }
 
@@ -183,7 +225,7 @@ namespace http {
             headers_.push_back(header);
         }
 
-        void HttpResponse::setStatus(StatusType status) {
+        void HttpResponse::setStatus(HttpResponse::StatusType status) {
             status_ = status;
         }
 
@@ -191,7 +233,7 @@ namespace http {
             content_ = content;
         }
 
-        HttpResponse HttpResponse::stockReply(StatusType status) {
+        HttpResponse HttpResponse::stockReply(HttpResponse::StatusType status) {
             HttpResponse resp;
             resp.setStatus(status);
             resp.setContent(stock_replies::toString(status));
@@ -199,6 +241,18 @@ namespace http {
             resp.setHeader(Header("Content-Type", "text/html"), 1);
 
             return resp;
+        }
+
+        std::string HttpResponse::toString() {
+            std::stringstream stream;
+
+            stream << statusToString(status_);
+            for (auto it = headers_.begin(); it != headers_.end(); ++it) {
+                stream << (*it).name << misc_strings::name_value_separator << (*it).value << misc_strings::crlf;
+            }
+            stream << misc_strings::crlf << content_;
+
+            return stream.str();
         }
     }
 }

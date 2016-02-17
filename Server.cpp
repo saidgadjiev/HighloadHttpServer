@@ -23,8 +23,7 @@ namespace http {
 
             //char *dataOut = new char[lengthOut];
 
-            std::stringstream response;
-            std::stringstream response_body;
+            std::stringstream responseBody;
 
             //bufferevent_read(bev, data, length);
 
@@ -32,19 +31,19 @@ namespace http {
             std::cout << "Input: " << data << std::endl;
 
             //std::cout << "Output: " << dataOut << std::endl;
-            response_body << "<title>Test C++ HTTP Server</title>\n"
+            HttpResponse response;
+
+            response.setStatus(HttpResponse::OK);
+            responseBody << "<title>Test C++ HTTP Server</title>\n"
             << "<h1>Test page</h1>\n"
             << "<p>This is body of the test page...</p>\n"
             << "<h2>Request headers</h2>\n"
             << "<em><small>Test C++ Http Server</small></em>\n";
+            response.setContent(responseBody.str());
+            response.setHeader(Header("Content-Length", std::to_string(response.getContent().size())), 0);
+            response.setHeader(Header("Content-Type", mime_types::extensionToType("html")), 1);
 
-            response << "HTTP/1.1 200 OK\r\n"
-            << "Version: HTTP/1.1\r\n"
-            << "Content-Type: text/html; charset=utf-8\r\n"
-            << "Content-Length: " << response_body.str().length()
-            << "\r\n\r\n"
-            << response_body.str();
-            evbuffer_add(bufferevent_get_output(bev), response.str().c_str(), response.str().length());
+            evbuffer_add(bufferevent_get_output(bev), response.toString().c_str(), response.toString().length());
 
             //evbuffer_drain(bufferevent_get_output(bev), response.str().length());
             //bufferevent_write(bev, response.str().c_str(), response.str().length());

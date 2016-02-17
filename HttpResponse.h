@@ -9,6 +9,7 @@
 #include <vector>
 #include <cstring>
 #include "Header.h"
+#include <sstream>
 
 namespace http {
     namespace server {
@@ -43,6 +44,7 @@ namespace http {
             void addHeader(Header header);
             void setContent(std::string content);
             void setStatus(StatusType status);
+            std::string toString();
         private:
             std::vector<Header> headers_;
             std::string content_;
