@@ -254,5 +254,9 @@ namespace http {
 
             return stream.str();
         }
+
+        void HttpResponse::contentAppend(char buff[], unsigned long size) {
+            content_.append(buff, size);
+        }
     }
 }

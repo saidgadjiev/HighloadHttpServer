@@ -43,6 +43,7 @@ namespace http {
             void setHeader(Header header, int i);
             void addHeader(Header header);
             void setContent(std::string content);
+            void contentAppend(char buff[], unsigned long size);
             void setStatus(StatusType status);
             std::string toString();
         private:

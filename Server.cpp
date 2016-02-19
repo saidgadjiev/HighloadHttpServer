@@ -23,8 +23,6 @@ namespace http {
 
             //char *dataOut = new char[lengthOut];
 
-            std::stringstream responseBody;
-
             //bufferevent_read(bev, data, length);
 
             evbuffer_remove(bufferevent_get_input(bev), data, length);
@@ -32,16 +30,21 @@ namespace http {
 
             //std::cout << "Output: " << dataOut << std::endl;
             HttpResponse response;
+            std::ifstream fin("test.jpg", std::ios_base::in | std::ios_base::binary);
+
+            if (!fin.is_open()) {
+                LOG(ERROR) << "Файл не может быть открыт или создан" << std::endl;
+            }
+            char buff[512];
+
+            while (fin.read(buff, sizeof(buff)).gcount() > 0) {
+                response.contentAppend(buff, (unsigned long) fin.gcount());
+            }
 
             response.setStatus(HttpResponse::OK);
-            responseBody << "<title>Test C++ HTTP Server</title>\n"
-            << "<h1>Test page</h1>\n"
-            << "<p>This is body of the test page...</p>\n"
-            << "<h2>Request headers</h2>\n"
-            << "<em><small>Test C++ Http Server</small></em>\n";
-            response.setContent(responseBody.str());
             response.setHeader(Header("Content-Length", std::to_string(response.getContent().size())), 0);
-            response.setHeader(Header("Content-Type", mime_types::extensionToType("html")), 1);
+            response.setHeader(Header("Content-Type", mime_types::extensionToType("jpg")), 1);
+            //std::cout << response.toString();
 
             evbuffer_add(bufferevent_get_output(bev), response.toString().c_str(), response.toString().length());
 
