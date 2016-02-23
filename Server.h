@@ -11,7 +11,9 @@
 #include <event2/bufferevent.h>
 #include <event2/buffer.h>
 #include "HttpResponse.h"
+#include "HttpRequest.h"
 #include "MimeType.h"
+#include "HttpRequestParser.h"
 
 namespace http {
     namespace server {
@@ -21,17 +23,18 @@ namespace http {
             ~Server() { }
 
             void start();
-            static void accept_conn_cb(struct evconnlistener* listener,
+            void accept_conn_cb(struct evconnlistener* listener,
                                        evutil_socket_t fd,
                                        struct sockaddr* address,
                                        int socklen,
                                        void *ctx);
-            static void read_cb(struct bufferevent *bev, void *ctx);
-            static void event_cb(struct bufferevent* bev, short events, void* ctx);
-            static void accept_error_cb(struct evconnlistener* listener,
+            void read_cb(struct bufferevent *bev, void *ctx);
+            void event_cb(struct bufferevent* bev, short events, void* ctx);
+            void accept_error_cb(struct evconnlistener* listener,
                                         void *ctx);
         private:
             int port_;
+            HttpRequestParser requestParser_;
         };
     }
 }

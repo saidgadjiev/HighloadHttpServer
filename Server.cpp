@@ -3,6 +3,7 @@
 //
 
 #include "Server.h"
+#include "HttpRequestParser.h"
 
 INITIALIZE_EASYLOGGINGPP
 
@@ -16,21 +17,15 @@ namespace http {
 
         void Server::read_cb(struct bufferevent *bev, void *ctx) {
             size_t length = evbuffer_get_length(bufferevent_get_input(bev));
-
-            //size_t lengthOut = evbuffer_get_length(bufferevent_get_output(bev));
-
             char *data = new char[length];
-
-            //char *dataOut = new char[lengthOut];
-
-            //bufferevent_read(bev, data, length);
 
             evbuffer_remove(bufferevent_get_input(bev), data, length);
             std::cout << "Input: " << data << std::endl;
-
-            //std::cout << "Output: " << dataOut << std::endl;
+            requestParser_.reset();
+            HttpRequest request;
+            requestParser_.parse(request, data, length);
             HttpResponse response;
-            std::ifstream fin("test.jpg", std::ios_base::in | std::ios_base::binary);
+            std::ifstream fin("test.html", std::ios_base::in | std::ios_base::binary);
 
             if (!fin.is_open()) {
                 LOG(ERROR) << "Файл не может быть открыт или создан" << std::endl;
@@ -43,17 +38,10 @@ namespace http {
 
             response.setStatus(HttpResponse::OK);
             response.setHeader(Header("Content-Length", std::to_string(response.getContent().size())), 0);
-            response.setHeader(Header("Content-Type", mime_types::extensionToType("jpg")), 1);
-            //std::cout << response.toString();
-
+            response.setHeader(Header("Content-Type", mime_types::extensionToType("html")), 1);
             evbuffer_add(bufferevent_get_output(bev), response.toString().c_str(), response.toString().length());
 
-            //evbuffer_drain(bufferevent_get_output(bev), response.str().length());
-            //bufferevent_write(bev, response.str().c_str(), response.str().length());
-
             delete[] data;
-
-            //delete[] dataOut;
         }
 
         void Server::event_cb(struct bufferevent *bev, short events, void *ctx) {
