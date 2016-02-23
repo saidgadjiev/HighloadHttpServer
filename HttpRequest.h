@@ -16,9 +16,9 @@ namespace http {
             HttpRequest() {}
             ~HttpRequest() {}
 
-            std::string& getMethod() const;
-            std::string& getUrl() const;
-            std::vector<Header>& getHeaders() const;
+            std::string& getMethod();
+            std::string& getUrl();
+            std::vector<Header>& getHeaders();
             int getHttpVersionMajor() const;
             int getHttpVersionMinor() const;
             void setMethod(std::string method);
@@ -27,6 +27,7 @@ namespace http {
             void addHeader(Header header);
             void setHttpVersionMajor(int httpVersionMajor);
             void setHttpVersionMinor(int httpVersionMinor);
+            void pushBackMethod(char ch);
         private:
             std::string method_;
             std::string url_;

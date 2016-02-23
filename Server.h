@@ -23,14 +23,14 @@ namespace http {
             ~Server() { }
 
             void start();
-            void accept_conn_cb(struct evconnlistener* listener,
+            static void accept_conn_cb(struct evconnlistener* listener,
                                        evutil_socket_t fd,
                                        struct sockaddr* address,
                                        int socklen,
                                        void *ctx);
-            void read_cb(struct bufferevent *bev, void *ctx);
-            void event_cb(struct bufferevent* bev, short events, void* ctx);
-            void accept_error_cb(struct evconnlistener* listener,
+            static void read_cb(struct bufferevent *bev, void *ctx);
+            static void event_cb(struct bufferevent* bev, short events, void* ctx);
+            static void accept_error_cb(struct evconnlistener* listener,
                                         void *ctx);
         private:
             int port_;

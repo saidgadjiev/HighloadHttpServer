@@ -3,7 +3,6 @@
 //
 
 #include "Server.h"
-#include "HttpRequestParser.h"
 
 INITIALIZE_EASYLOGGINGPP
 
@@ -20,14 +19,15 @@ namespace http {
             char *data = new char[length];
 
             evbuffer_remove(bufferevent_get_input(bev), data, length);
-            std::cout << "Input: " << data << std::endl;
+            std::cout << "Input: " << data << length << std::endl;
             HttpRequestParser requestParser;
             HttpRequest request;
             HttpResponse response;
 
             requestParser.reset();
-            requestParser.parse(request, data, length);
+            //requestParser.parse(request, data, length);
 
+            //std::cout << request.getMethod();
             /*std::ifstream fin("test.html", std::ios_base::in | std::ios_base::binary);
 
             if (!fin.is_open()) {

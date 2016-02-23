@@ -6,15 +6,15 @@
 
 namespace http {
     namespace server {
-        std::string& HttpRequest::getMethod() const {
+        std::string& HttpRequest::getMethod() {
             return method_;
         }
 
-        std::string& HttpRequest::getUrl() const {
+        std::string& HttpRequest::getUrl() {
             return url_;
         }
 
-        std::vector<Header>& HttpRequest::getHeaders() const {
+        std::vector<Header>& HttpRequest::getHeaders(){
             return headers_;
         }
 
@@ -48,6 +48,10 @@ namespace http {
 
         void HttpRequest::setHttpVersionMinor(int httpVersionMinor) {
             httpVersionMinor_ = httpVersionMinor;
+        }
+
+        void HttpRequest::pushBackMethod(char ch) {
+            method_.push_back(ch);
         }
     }
 }
