@@ -16,17 +16,23 @@ namespace http {
             HttpRequest() {}
             ~HttpRequest() {}
 
-            std::string getMethod() const;
-            std::string getUrl() const;
-            std::vector<Header> getHeaders() const;
+            std::string& getMethod() const;
+            std::string& getUrl() const;
+            std::vector<Header>& getHeaders() const;
+            int getHttpVersionMajor() const;
+            int getHttpVersionMinor() const;
             void setMethod(std::string method);
             void setUrl(std::string url);
             void setHeader(Header header, int i);
             void addHeader(Header header);
+            void setHttpVersionMajor(int httpVersionMajor);
+            void setHttpVersionMinor(int httpVersionMinor);
         private:
             std::string method_;
             std::string url_;
             std::vector<Header> headers_;
+            int httpVersionMajor_;
+            int httpVersionMinor_;
         };
     }
 }

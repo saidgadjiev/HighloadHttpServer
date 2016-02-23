@@ -21,11 +21,14 @@ namespace http {
 
             evbuffer_remove(bufferevent_get_input(bev), data, length);
             std::cout << "Input: " << data << std::endl;
-            requestParser_.reset();
+            HttpRequestParser requestParser;
             HttpRequest request;
-            requestParser_.parse(request, data, length);
             HttpResponse response;
-            std::ifstream fin("test.html", std::ios_base::in | std::ios_base::binary);
+
+            requestParser.reset();
+            requestParser.parse(request, data, length);
+
+            /*std::ifstream fin("test.html", std::ios_base::in | std::ios_base::binary);
 
             if (!fin.is_open()) {
                 LOG(ERROR) << "Файл не может быть открыт или создан" << std::endl;
@@ -40,7 +43,7 @@ namespace http {
             response.setHeader(Header("Content-Length", std::to_string(response.getContent().size())), 0);
             response.setHeader(Header("Content-Type", mime_types::extensionToType("html")), 1);
             evbuffer_add(bufferevent_get_output(bev), response.toString().c_str(), response.toString().length());
-
+*/
             delete[] data;
         }
 

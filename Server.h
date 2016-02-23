@@ -34,7 +34,6 @@ namespace http {
                                         void *ctx);
         private:
             int port_;
-            HttpRequestParser requestParser_;
         };
     }
 }
