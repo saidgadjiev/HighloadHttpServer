@@ -18,6 +18,11 @@ namespace http {
 				resoursePath += "index.html";
 			}
 
+			size_t lastSlashPos = resoursePath.find_last_of("/");
+			size_t lastDotIndex = resoursePath.find_last_of(".");
+
+			std::string extension = resoursePath.substr(lastDotIndex + 1);
+
 			std::string fullPath = docRoot_ + resoursePath;
 			std::ifstream fin(fullPath, std::ios_base::in | std::ios_base::binary);
 
@@ -32,7 +37,7 @@ namespace http {
 
 			response.setStatus(HttpResponse::OK);
 			response.setHeader(Header("Content-Length", std::to_string(response.getContent().size())), 0);
-			response.setHeader(Header("Content-Type", mime_types::extensionToType("html")), 1);
+			response.setHeader(Header("Content-Type", mime_types::extensionToType(extension)), 1);
 		}
 	}
 }
