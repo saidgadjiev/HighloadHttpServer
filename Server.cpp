@@ -3,6 +3,7 @@
 //
 
 #include "Server.h"
+#include "HttpRequestHandler.h"
 
 INITIALIZE_EASYLOGGINGPP
 
@@ -25,25 +26,14 @@ namespace http {
             HttpResponse response;
 
             requestParser.reset();
-            //requestParser.parse(request, data, length);
+            requestParser.parse(request, data, length);
+            HttpRequestHandler requestHandler(".");
 
-            //std::cout << request.getMethod();
-            /*std::ifstream fin("test.html", std::ios_base::in | std::ios_base::binary);
+            requestHandler.handleRequest(request, response);
 
-            if (!fin.is_open()) {
-                LOG(ERROR) << "Файл не может быть открыт или создан" << std::endl;
-            }
-            char buff[512];
 
-            while (fin.read(buff, sizeof(buff)).gcount() > 0) {
-                response.contentAppend(buff, (unsigned long) fin.gcount());
-            }
-
-            response.setStatus(HttpResponse::OK);
-            response.setHeader(Header("Content-Length", std::to_string(response.getContent().size())), 0);
-            response.setHeader(Header("Content-Type", mime_types::extensionToType("html")), 1);
             evbuffer_add(bufferevent_get_output(bev), response.toString().c_str(), response.toString().length());
-*/
+
             delete[] data;
         }
 
