@@ -16,8 +16,8 @@ namespace http {
 			state_ = method_start;
 		}
 
-		HttpRequestParser::ParseResult HttpRequestParser::parse(HttpRequest &request, char *buffer, int length) {
-			int i = 0;
+		HttpRequestParser::ParseResult HttpRequestParser::parse(HttpRequest &request, char *buffer, size_t length) {
+			size_t i = 0;
 
 			while (i < length) {
 				ParseResult result = consume(request, buffer[i++]);
@@ -55,7 +55,7 @@ namespace http {
 					} else if (isCtl(input)) {
 						return bad;
 					} else {
-						request.getUrl().push_back(input);
+						request.getUri().push_back(input);
 						return indeterminate;
 					}
 				case http_version_h:

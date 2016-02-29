@@ -3,9 +3,9 @@
 using namespace http::server;
 
 int main() {
-    Server server(8000);
+	Server server(8000);
 
-    server.start();
+	server.start();
 
-    return 0;
+	return 0;
 }

@@ -15,6 +15,10 @@ namespace http {
                     {"htm", "text/html"},
                     {"html", "text/html"},
                     {"jpg", "image/jpeg"},
+                    {"jpeg", "image/jpeg"},
+                    {"css", "text/css"},
+                    {"js", "text/javascript"},
+                    {"swf", "application/x-shockwave-flash"},
                     {"png", "image/png"}
             };
 

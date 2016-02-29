@@ -202,7 +202,7 @@ namespace http {
         }
 
         HttpResponse::HttpResponse() {
-            headers_.resize(2);
+            headers_.resize(3);
         }
 
         std::vector<Header> HttpResponse::getHeaders() const {

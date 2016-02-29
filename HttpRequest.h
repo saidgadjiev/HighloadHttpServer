@@ -17,12 +17,12 @@ namespace http {
             ~HttpRequest() {}
 
             std::string& getMethod();
-            std::string& getUrl();
+            std::string& getUri();
             std::vector<Header>& getHeaders();
             int getHttpVersionMajor() const;
             int getHttpVersionMinor() const;
             void setMethod(std::string method);
-            void setUrl(std::string url);
+            void setUri(std::string uri);
             void setHeader(Header header, int i);
             void addHeader(Header header);
             void setHttpVersionMajor(int httpVersionMajor);
@@ -30,7 +30,7 @@ namespace http {
             void pushBackMethod(char ch);
         private:
             std::string method_;
-            std::string url_;
+            std::string uri_;
             std::vector<Header> headers_;
             int httpVersionMajor_;
             int httpVersionMinor_;

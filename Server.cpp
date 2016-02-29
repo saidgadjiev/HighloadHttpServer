@@ -2,6 +2,7 @@
 // Created by Саид on 14.02.16.
 //
 
+#include <event2/http.h>
 #include "Server.h"
 #include "HttpRequestHandler.h"
 
@@ -20,7 +21,6 @@ namespace http {
             char *data = new char[length];
 
             evbuffer_remove(bufferevent_get_input(bev), data, length);
-            std::cout << "Input: " << data << length << std::endl;
             HttpRequestParser requestParser;
             HttpRequest request;
             HttpResponse response;
@@ -31,15 +31,14 @@ namespace http {
 
             requestHandler.handleRequest(request, response);
 
-
             evbuffer_add(bufferevent_get_output(bev), response.toString().c_str(), response.toString().length());
+            //bufferevent_free(bev);
 
             delete[] data;
         }
 
         void Server::event_cb(struct bufferevent *bev, short events, void *ctx) {
             if (events & BEV_EVENT_ERROR) {
-                LOG(ERROR) << "Error: event";
 
                 bufferevent_free(bev);
             }
@@ -48,7 +47,7 @@ namespace http {
                 bufferevent_free(bev);
             }
 
-            LOG(INFO) << "New event";
+            //LOG(INFO) << "New event";
         }
 
         void Server::accept_error_cb(struct evconnlistener *listener, void *ctx) {
@@ -56,7 +55,7 @@ namespace http {
 
             int err = EVUTIL_SOCKET_ERROR();
 
-            LOG(ERROR) << "Error: " << err << "=" << evutil_socket_error_to_string(err);
+            //LOG(ERROR) << "Error: " << err << "=" << evutil_socket_error_to_string(err);
             event_base_loopexit(base, NULL);
         }
 
@@ -65,7 +64,7 @@ namespace http {
                                     struct sockaddr *address,
                                     int socklen,
                                     void *ctx) {
-            LOG(INFO) << "New client";
+            //LOG(INFO) << "New client";
             struct event_base *base = evconnlistener_get_base(listener);
             struct bufferevent *bev = bufferevent_socket_new(base, fd, BEV_OPT_CLOSE_ON_FREE);
 
@@ -91,7 +90,20 @@ namespace http {
                 LOG(ERROR) << "Couldn't create listener";
             }
             evconnlistener_set_error_cb(listener, Server::accept_error_cb);
+            struct event *signal_event = evsignal_new(eventBase, SIGINT, SIGINTHandler, (void *) eventBase);
+            if (!signal_event || event_add(signal_event, NULL) < 0) {
+                LOG(INFO) << "Could not create/add a signal event!";
+            }
             event_base_dispatch(eventBase);
+        }
+
+        void Server::SIGINTHandler(evutil_socket_t sig, short events, void *user_data) {
+            struct event_base *base = (struct event_base*)user_data;
+            struct timeval delay = {1, 0};
+
+            LOG(INFO) << "Caught an interrupt signal; exiting cleanly in one second!";
+
+            event_base_loopexit(base, &delay);
         }
     }
 }

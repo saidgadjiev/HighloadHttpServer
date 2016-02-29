@@ -10,8 +10,8 @@ namespace http {
             return method_;
         }
 
-        std::string& HttpRequest::getUrl() {
-            return url_;
+        std::string& HttpRequest::getUri() {
+            return uri_;
         }
 
         std::vector<Header>& HttpRequest::getHeaders(){
@@ -22,8 +22,8 @@ namespace http {
             method_ = method;
         }
 
-        void HttpRequest::setUrl(std::string url) {
-            url_ = url;
+        void HttpRequest::setUri(std::string uri) {
+            uri_ = uri;
         }
 
         void HttpRequest::setHeader(Header header, int i) {

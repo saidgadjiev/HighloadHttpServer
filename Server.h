@@ -32,6 +32,7 @@ namespace http {
             static void accept_error_cb(struct evconnlistener* listener,
                                         void *ctx);
         private:
+            static void SIGINTHandler(evutil_socket_t sig, short events, void *user_data);
             int port_;
         };
     }
