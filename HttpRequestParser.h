@@ -18,7 +18,7 @@ namespace http {
 
 			enum ParseResult {good, bad, indeterminate};
 
-			ParseResult parse(HttpRequest &request, char *buffer, size_t length);
+			ParseResult parse(HttpRequest &request, const char *buffer, size_t length);
 		private:
 			ParseResult consume(HttpRequest &request, char input);
 			static bool isChar(int c);
@@ -30,6 +30,9 @@ namespace http {
 				method_start,
 				method,
 				url,
+				query_param_start,
+				query_param_name,
+				query_param_value,
 				http_version_h,
 				http_version_t_1,
 				http_version_t_2,

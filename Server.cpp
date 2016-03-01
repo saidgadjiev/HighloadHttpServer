@@ -29,7 +29,7 @@ namespace http {
             requestParser.parse(request, data, length);
             HttpRequestHandler requestHandler(".");
 
-            requestHandler.handleRequest(request, response);
+            requestHandler.handleRequest(&request, &response);
 
             evbuffer_add(bufferevent_get_output(bev), response.toString().c_str(), response.toString().length());
             //bufferevent_free(bev);

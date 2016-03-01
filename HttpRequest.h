@@ -6,6 +6,7 @@
 #define HTTPSERVER_HTTPREQUEST_H
 
 #include "Header.h"
+#include "QueryParameter.h"
 #include <vector>
 #include <cstring>
 
@@ -19,12 +20,15 @@ namespace http {
             std::string& getMethod();
             std::string& getUri();
             std::vector<Header>& getHeaders();
+            std::vector<QueryParameter>& getQueryParameters();
             int getHttpVersionMajor() const;
             int getHttpVersionMinor() const;
             void setMethod(std::string method);
             void setUri(std::string uri);
             void setHeader(Header header, int i);
+            void setQueryParameter(QueryParameter parameter, int i);
             void addHeader(Header header);
+            void addQueryParameter(QueryParameter parameter);
             void setHttpVersionMajor(int httpVersionMajor);
             void setHttpVersionMinor(int httpVersionMinor);
             void pushBackMethod(char ch);
@@ -32,6 +36,7 @@ namespace http {
             std::string method_;
             std::string uri_;
             std::vector<Header> headers_;
+            std::vector<QueryParameter> queryParameters_;
             int httpVersionMajor_;
             int httpVersionMinor_;
         };

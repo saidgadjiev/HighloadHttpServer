@@ -16,8 +16,9 @@ namespace http {
 		class HttpRequestHandler {
 		public:
 			HttpRequestHandler(std::string docRoot);
-			void handleRequest(HttpRequest &request, HttpResponse &response);
+			void handleRequest(HttpRequest *request, HttpResponse *response);
 		private:
+			bool urlDecode(const std::string &in, std::string *out);
 			std::string docRoot_;
 		};
 	}

@@ -53,5 +53,17 @@ namespace http {
         void HttpRequest::pushBackMethod(char ch) {
             method_.push_back(ch);
         }
+
+        std::vector<QueryParameter> &HttpRequest::getQueryParameters() {
+            return queryParameters_;
+        }
+
+        void HttpRequest::setQueryParameter(QueryParameter parameter, int i) {
+            queryParameters_[i] = parameter;
+        }
+
+        void HttpRequest::addQueryParameter(QueryParameter parameter) {
+            queryParameters_.push_back(parameter);
+        }
     }
 }

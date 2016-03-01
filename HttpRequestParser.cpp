@@ -16,7 +16,7 @@ namespace http {
 			state_ = method_start;
 		}
 
-		HttpRequestParser::ParseResult HttpRequestParser::parse(HttpRequest &request, char *buffer, size_t length) {
+		HttpRequestParser::ParseResult HttpRequestParser::parse(HttpRequest &request, const char *buffer, size_t length) {
 			size_t i = 0;
 
 			while (i < length) {
@@ -48,14 +48,41 @@ namespace http {
 						request.getMethod().push_back(input);
 						return indeterminate;
 					}
-				case url:;
-					if (input == ' ') {
+				case url:
+					if (input == '?') {
+						state_ = query_param_start;
+						return indeterminate;
+					} else if (input == ' ') {
 						state_ = http_version_h;
 						return indeterminate;
 					} else if (isCtl(input)) {
 						return bad;
 					} else {
 						request.getUri().push_back(input);
+						return indeterminate;
+					}
+				case query_param_start:
+					state_ = query_param_name;
+					request.getQueryParameters().push_back(QueryParameter());
+					request.getQueryParameters().back().name.push_back(input);
+					return indeterminate;
+				case query_param_name:
+					if (input == '=') {
+						state_ = query_param_value;
+						return indeterminate;
+					} else {
+						request.getQueryParameters().back().name.push_back(input);
+						return indeterminate;
+					}
+				case query_param_value:
+					if (input == '&') {
+						state_ = query_param_start;
+						return indeterminate;
+					} else if (input == ' ') {
+						state_ = http_version_h;
+						return indeterminate;
+					} else {
+						request.getQueryParameters().back().value.push_back(input);
 						return indeterminate;
 					}
 				case http_version_h:
