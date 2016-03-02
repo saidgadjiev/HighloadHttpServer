@@ -1,4 +1,4 @@
 # HttpServer
-Technopark home work.
+Technopark homework.
 HighLoad Server.
 Using technologies: C++11, libevent.

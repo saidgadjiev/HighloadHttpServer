@@ -12,6 +12,11 @@ namespace http {
 
 		void http::server::HttpRequestHandler::handleRequest(HttpRequest *request,
 															 HttpResponse *response) {
+			if (request->getMethod() == "POST") {
+				*response = HttpResponse::stockReply(HttpResponse::BAD_REQUEST);
+
+				return;
+			}
 			std::string resoursePath = request->getUri();
 
 			if (!urlDecode(request->getUri(), &resoursePath)) {
@@ -24,8 +29,11 @@ namespace http {
 
 				return;
 			}
+
+			bool indexFile = false;
 			if (resoursePath[resoursePath.size() - 1] == '/') {
 				resoursePath += "index.html";
+				indexFile = true;
 			}
 			size_t lastSlashPos = resoursePath.find_last_of("/");
 			size_t lastDotPos = resoursePath.find_last_of(".");
@@ -38,7 +46,11 @@ namespace http {
 			std::string fullPath = docRoot_ + resoursePath;
 
 			if (access(fullPath.c_str(), 0) == -1) {
-				*response = HttpResponse::stockReply(HttpResponse::NOT_FOUND);
+				if (indexFile) {
+					*response = HttpResponse::stockReply(HttpResponse::FORBIDDEN);
+				} else {
+					*response = HttpResponse::stockReply(HttpResponse::NOT_FOUND);
+				}
 
 				return;
 			}
@@ -48,16 +60,23 @@ namespace http {
 				return;
 			}
 			std::ifstream fin(fullPath, std::ios_base::in | std::ios_base::binary);
-			char buff[512];
+			if (request->getMethod() == "GET") {
+				char buff[512];
 
-			while (fin.read(buff, sizeof(buff)).gcount() > 0) {
-				response->contentAppend(buff, (unsigned long) fin.gcount());
+				while (fin.read(buff, sizeof(buff)).gcount() > 0) {
+					response->contentAppend(buff, (unsigned long) fin.gcount());
+				}
+				fin.clear();
+				fin.seekg(0);
 			}
+			fin.seekg(0, std::ios::end);
+			int sizeInBytes = fin.tellg();
 
 			response->setStatus(HttpResponse::OK);
-			response->setHeader(Header("Content-Length", std::to_string(response->getContent().size())), 0);
-			response->setHeader(Header("Content-Type", mime_types::extensionToType(extension)), 1);
-			response->setHeader(Header("Connection", "close"), 2);
+			response->addHeader(Header("Server", "libevent|C++"));
+			response->addHeader(Header("Content-Length", std::to_string(sizeInBytes)));
+			response->addHeader(Header("Content-Type", mime_types::extensionToType(extension)));
+			response->addHeader(Header("Connection", "close"));
 		}
 
 		bool HttpRequestHandler::urlDecode(const std::string &in, std::string *out) {

@@ -28,6 +28,7 @@ namespace http {
                                        int socklen,
                                        void *ctx);
             static void read_cb(struct bufferevent *bev, void *ctx);
+            static void write_cb(struct bufferevent *bev, void *ctx);
             static void event_cb(struct bufferevent* bev, short events, void* ctx);
             static void accept_error_cb(struct evconnlistener* listener,
                                         void *ctx);

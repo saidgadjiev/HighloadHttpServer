@@ -37,9 +37,12 @@ namespace http {
             delete[] data;
         }
 
+        void Server::write_cb(struct bufferevent *bev, void *ctx) {
+            bufferevent_free(bev);
+        }
+
         void Server::event_cb(struct bufferevent *bev, short events, void *ctx) {
             if (events & BEV_EVENT_ERROR) {
-
                 bufferevent_free(bev);
             }
 
@@ -47,7 +50,6 @@ namespace http {
                 bufferevent_free(bev);
             }
 
-            //LOG(INFO) << "New event";
         }
 
         void Server::accept_error_cb(struct evconnlistener *listener, void *ctx) {
@@ -55,7 +57,7 @@ namespace http {
 
             int err = EVUTIL_SOCKET_ERROR();
 
-            //LOG(ERROR) << "Error: " << err << "=" << evutil_socket_error_to_string(err);
+            LOG(ERROR) << "Error: " << err << "=" << evutil_socket_error_to_string(err);
             event_base_loopexit(base, NULL);
         }
 
@@ -64,12 +66,11 @@ namespace http {
                                     struct sockaddr *address,
                                     int socklen,
                                     void *ctx) {
-            //LOG(INFO) << "New client";
             struct event_base *base = evconnlistener_get_base(listener);
             struct bufferevent *bev = bufferevent_socket_new(base, fd, BEV_OPT_CLOSE_ON_FREE);
 
-            bufferevent_setcb(bev, Server::read_cb, NULL, Server::event_cb, NULL);
-            bufferevent_enable(bev, EV_READ | EV_WRITE);
+            bufferevent_setcb(bev, Server::read_cb, Server::write_cb, Server::event_cb, NULL);
+            bufferevent_enable(bev, EV_READ);
         }
 
         void Server::start() {

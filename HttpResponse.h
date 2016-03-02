@@ -10,6 +10,7 @@
 #include <cstring>
 #include "Header.h"
 #include <sstream>
+#include <assert.h>
 
 namespace http {
     namespace server {

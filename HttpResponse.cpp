@@ -201,9 +201,8 @@ namespace http {
             }
         }
 
-        HttpResponse::HttpResponse() {
-            headers_.resize(3);
-        }
+        HttpResponse::HttpResponse()
+        { }
 
         std::vector<Header> HttpResponse::getHeaders() const {
             return headers_;
@@ -218,6 +217,8 @@ namespace http {
         }
 
         void HttpResponse::setHeader(Header header, int i) {
+            assert(i < headers_.size());
+
             headers_[i] = header;
         }
 
@@ -237,8 +238,10 @@ namespace http {
             HttpResponse resp;
             resp.setStatus(status);
             resp.setContent(stock_replies::toString(status));
-            resp.setHeader(Header("Content-Length", std::to_string(resp.getContent().size())), 0);
-            resp.setHeader(Header("Content-Type", "text/html"), 1);
+            resp.addHeader(Header("Server", "libevent|C++"));
+            resp.addHeader(Header("Content-Length", std::to_string(resp.getContent().size())));
+            resp.addHeader(Header("Content-Type", "text/html"));
+            resp.addHeader(Header("Connection", "close"));
 
             return resp;
         }
@@ -248,9 +251,10 @@ namespace http {
 
             stream << statusToString(status_);
             for (auto it = headers_.begin(); it != headers_.end(); ++it) {
-                stream << (*it).name << misc_strings::name_value_separator << (*it).value << misc_strings::crlf;
+                stream << (*it).name << misc_strings::name_value_separator << (*it).value << "\r\n";
             }
-            stream << misc_strings::crlf << content_;
+            stream << "\r\n";
+            stream << content_;
 
             return stream.str();
         }
