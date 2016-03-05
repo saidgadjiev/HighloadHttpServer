@@ -9,9 +9,9 @@
 
 namespace http {
 	namespace server {
-		struct QueryParameter {
-			QueryParameter() {}
-			QueryParameter(std::string name, std::string value)
+		struct NameValue {
+			NameValue() {}
+			NameValue(std::string name, std::string value)
 					: name(name),
 					  value(value)
 			{}

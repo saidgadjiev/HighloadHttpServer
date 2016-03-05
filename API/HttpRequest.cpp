@@ -2,35 +2,24 @@
 // Created by Саид on 15.02.16.
 //
 
+#include <assert.h>
 #include "HttpRequest.h"
 
 namespace http {
     namespace server {
-        std::string& HttpRequest::getMethod() {
+        std::string HttpRequest::getMethod() {
             return method_;
         }
 
-        std::string& HttpRequest::getUri() {
+        std::string HttpRequest::getUri() {
             return uri_;
         }
 
-        std::vector<Header>& HttpRequest::getHeaders(){
+        std::vector<NameValue>& HttpRequest::getHeaders(){
             return headers_;
         }
 
-        void HttpRequest::setMethod(std::string method) {
-            method_ = method;
-        }
-
-        void HttpRequest::setUri(std::string uri) {
-            uri_ = uri;
-        }
-
-        void HttpRequest::setHeader(Header header, int i) {
-            headers_[i] = header;
-        }
-
-        void HttpRequest::addHeader(Header header) {
+        void HttpRequest::addHeader(NameValue header) {
             headers_.push_back(header);
         }
 
@@ -54,16 +43,16 @@ namespace http {
             method_.push_back(ch);
         }
 
-        std::vector<QueryParameter> &HttpRequest::getQueryParameters() {
+        std::vector<NameValue> &HttpRequest::getQueryParameters() {
             return queryParameters_;
         }
 
-        void HttpRequest::setQueryParameter(QueryParameter parameter, int i) {
-            queryParameters_[i] = parameter;
+        void HttpRequest::addQueryParameter(NameValue parameter) {
+            queryParameters_.push_back(parameter);
         }
 
-        void HttpRequest::addQueryParameter(QueryParameter parameter) {
-            queryParameters_.push_back(parameter);
+        void HttpRequest::pushBackUri(char ch) {
+            uri_.push_back(ch);
         }
     }
 }

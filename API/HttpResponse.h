@@ -8,7 +8,7 @@
 
 #include <vector>
 #include <cstring>
-#include "Header.h"
+#include "NameValue.h"
 #include <sstream>
 #include <assert.h>
 
@@ -18,6 +18,7 @@ namespace http {
         public:
             HttpResponse();
             ~HttpResponse() {}
+
             enum StatusType{
                 OK = 200,
                 CREATED = 201,
@@ -31,24 +32,23 @@ namespace http {
                 UNAUTHORIZED = 401,
                 FORBIDDEN = 403,
                 NOT_FOUND = 404,
+                METHOD_NOT_ALLOWED = 405,
                 INTERNAL_SERVER_ERROR = 500,
                 NOT_IMPLEMENTED = 501,
                 BAD_GATEWAY = 502,
                 SERVICE_UNAVAILABLE = 503
             };
-
             static HttpResponse stockReply(StatusType status);
-            std::vector<Header> getHeaders() const;
+            std::vector<NameValue> getHeaders() const;
             std::string getContent() const;
             StatusType getStatus() const;
-            void setHeader(Header header, int i);
-            void addHeader(Header header);
+            void addHeader(NameValue header);
             void setContent(std::string content);
             void contentAppend(char buff[], unsigned long size);
             void setStatus(StatusType status);
             std::string toString();
         private:
-            std::vector<Header> headers_;
+            std::vector<NameValue> headers_;
             std::string content_;
             StatusType status_;
         };

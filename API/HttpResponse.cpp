@@ -31,6 +31,8 @@ namespace http {
                     "HTTP/1.0 403 Forbidden\r\n";
             const std::string NOT_FOUND =
                     "HTTP/1.0 404 Not Found\r\n";
+            const std::string METHOD_NOT_ALLOWED =
+                    "HTTP/1.0 405 Method Not Allowed\r\n";
             const std::string INTERNAL_SERVER_ERROR =
                     "HTTP/1.0 500 Internal Server Error\r\n";
             const std::string NOT_IMPLEMENTED =
@@ -72,6 +74,8 @@ namespace http {
                     return status_strings::FORBIDDEN;
                 case HttpResponse::NOT_FOUND:
                     return status_strings::NOT_FOUND;
+                case HttpResponse::METHOD_NOT_ALLOWED:
+                    return status_strings::METHOD_NOT_ALLOWED;
                 case HttpResponse::INTERNAL_SERVER_ERROR:
                     return status_strings::INTERNAL_SERVER_ERROR;
                 case HttpResponse::NOT_IMPLEMENTED:
@@ -140,6 +144,11 @@ namespace http {
                             "<head><title>Not Found</title></head>"
                             "<body><h1>404 Not Found</h1></body>"
                             "</html>";
+            const char METHOD_NOT_ALLOWED[] =
+                    "<html>"
+                            "<head><title>Method Not Allowed</title></head>"
+                            "<body><h1>405 Method Not Allowed</h1></body>"
+                            "</html>";
             const char INTERNAL_SERVER_ERROR[] =
                     "<html>"
                             "<head><title>Internal Server Error</title></head>"
@@ -187,6 +196,8 @@ namespace http {
                         return FORBIDDEN;
                     case HttpResponse::NOT_FOUND:
                         return NOT_FOUND;
+                    case HttpResponse::METHOD_NOT_ALLOWED:
+                        return METHOD_NOT_ALLOWED;
                     case HttpResponse::INTERNAL_SERVER_ERROR:
                         return INTERNAL_SERVER_ERROR;
                     case HttpResponse::NOT_IMPLEMENTED:
@@ -204,7 +215,7 @@ namespace http {
         HttpResponse::HttpResponse()
         { }
 
-        std::vector<Header> HttpResponse::getHeaders() const {
+        std::vector<NameValue> HttpResponse::getHeaders() const {
             return headers_;
         }
 
@@ -216,13 +227,7 @@ namespace http {
             return status_;
         }
 
-        void HttpResponse::setHeader(Header header, int i) {
-            assert(i < headers_.size());
-
-            headers_[i] = header;
-        }
-
-        void HttpResponse::addHeader(Header header) {
+        void HttpResponse::addHeader(NameValue header) {
             headers_.push_back(header);
         }
 
@@ -236,12 +241,14 @@ namespace http {
 
         HttpResponse HttpResponse::stockReply(HttpResponse::StatusType status) {
             HttpResponse resp;
+
             resp.setStatus(status);
             resp.setContent(stock_replies::toString(status));
-            resp.addHeader(Header("Server", "libevent|C++"));
-            resp.addHeader(Header("Content-Length", std::to_string(resp.getContent().size())));
-            resp.addHeader(Header("Content-Type", "text/html"));
-            resp.addHeader(Header("Connection", "close"));
+            resp.addHeader(NameValue("Server", "libevent|C++"));
+            resp.addHeader(NameValue("Content-Length", std::to_string(resp.getContent().size())));
+            resp.addHeader(NameValue("Content-Type", "text/html"));
+            resp.addHeader(NameValue("Connection", "close"));
+            resp.addHeader(NameValue("Allow", "GET | HEAD"));
 
             return resp;
         }
@@ -251,9 +258,9 @@ namespace http {
 
             stream << statusToString(status_);
             for (auto it = headers_.begin(); it != headers_.end(); ++it) {
-                stream << (*it).name << misc_strings::name_value_separator << (*it).value << "\r\n";
+                stream << (*it).name << misc_strings::name_value_separator << (*it).value << misc_strings::crlf;
             }
-            stream << "\r\n";
+            stream << misc_strings::crlf;
             stream << content_;
 
             return stream.str();

@@ -17,9 +17,15 @@ namespace http {
 		public:
 			HttpRequestHandler(std::string docRoot);
 			void handleRequest(HttpRequest *request, HttpResponse *response);
+			bool isAllowMethod(std::string method);
+			bool isMethodWithContent(std::string method);
+			int getFileLength(std::ifstream &fin);
+			std::string getFileExtension(std::string path);
 		private:
 			bool urlDecode(const std::string &in, std::string *out);
+			void writeContentToRequest(std::ifstream &fin, HttpResponse *response);
 			std::string docRoot_;
+
 		};
 	}
 }

@@ -8,8 +8,8 @@ namespace http {
     namespace server {
         namespace mime_types {
             struct MimeTypeMapping {
-                const char *extension;
-                const char *mimeType;
+                std::string extension;
+                std::string mimeType;
             } mappings[] = {
                     {"gif", "image/gif"},
                     {"htm", "text/html"},
@@ -22,8 +22,7 @@ namespace http {
                     {"png", "image/png"}
             };
 
-            std::string extensionToType(const std::string &extension)
-            {
+            std::string extensionToType(const std::string &extension) {
                 for (MimeTypeMapping m: mappings) {
                     if (m.extension == extension) {
                         return m.mimeType;

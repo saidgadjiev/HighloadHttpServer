@@ -15,9 +15,7 @@ namespace http {
 			~HttpRequestParser();
 
 			void reset();
-
 			enum ParseResult {good, bad, indeterminate};
-
 			ParseResult parse(HttpRequest &request, const char *buffer, size_t length);
 		private:
 			ParseResult consume(HttpRequest &request, char input);
@@ -29,7 +27,7 @@ namespace http {
 			enum State {
 				method_start,
 				method,
-				url,
+				uri,
 				query_param_start,
 				query_param_name,
 				query_param_value,

@@ -12,8 +12,8 @@ namespace http {
 
 		void http::server::HttpRequestHandler::handleRequest(HttpRequest *request,
 															 HttpResponse *response) {
-			if (request->getMethod() == "POST") {
-				*response = HttpResponse::stockReply(HttpResponse::BAD_REQUEST);
+			if (!isAllowMethod(request->getMethod())) {
+				*response = HttpResponse::stockReply(HttpResponse::METHOD_NOT_ALLOWED);
 
 				return;
 			}
@@ -29,19 +29,11 @@ namespace http {
 
 				return;
 			}
-
 			bool indexFile = false;
+
 			if (resoursePath[resoursePath.size() - 1] == '/') {
 				resoursePath += "index.html";
 				indexFile = true;
-			}
-			size_t lastSlashPos = resoursePath.find_last_of("/");
-			size_t lastDotPos = resoursePath.find_last_of(".");
-			std::string extension;
-
-			if (lastDotPos != std::string::npos && lastDotPos > lastSlashPos) {
-
-				extension = resoursePath.substr(lastDotPos + 1);
 			}
 			std::string fullPath = docRoot_ + resoursePath;
 
@@ -59,24 +51,55 @@ namespace http {
 
 				return;
 			}
+
 			std::ifstream fin(fullPath, std::ios_base::in | std::ios_base::binary);
-			if (request->getMethod() == "GET") {
-				char buff[512];
 
-				while (fin.read(buff, sizeof(buff)).gcount() > 0) {
-					response->contentAppend(buff, (unsigned long) fin.gcount());
-				}
-				fin.clear();
-				fin.seekg(0);
+			if (isMethodWithContent(request->getMethod())) {
+				writeContentToRequest(fin, response);
 			}
-			fin.seekg(0, std::ios::end);
-			int sizeInBytes = fin.tellg();
-
 			response->setStatus(HttpResponse::OK);
-			response->addHeader(Header("Server", "libevent|C++"));
-			response->addHeader(Header("Content-Length", std::to_string(sizeInBytes)));
-			response->addHeader(Header("Content-Type", mime_types::extensionToType(extension)));
-			response->addHeader(Header("Connection", "close"));
+			response->addHeader(NameValue("Server", "libevent|C++"));
+			response->addHeader(NameValue("Content-Length", std::to_string(getFileLength(fin))));
+			response->addHeader(NameValue("Content-Type", mime_types::extensionToType(getFileExtension(resoursePath))));
+			response->addHeader(NameValue("Connection", "close"));
+			response->addHeader(NameValue("Allow", "GET | HEAD"));
+		}
+
+		bool HttpRequestHandler::isAllowMethod(std::string method) {
+			return method == "GET" || method == "HEAD";
+		}
+
+		bool HttpRequestHandler::isMethodWithContent(std::string method) {
+			return method == "GET" || method == "POST";
+
+		}
+
+		void HttpRequestHandler::writeContentToRequest(std::ifstream &fin, HttpResponse *response) {
+			char buff[512];
+
+			while (fin.read(buff, sizeof(buff)).gcount() > 0) {
+				response->contentAppend(buff, (unsigned long) fin.gcount());
+			}
+			fin.clear();
+			fin.seekg(0);
+		}
+
+		int HttpRequestHandler::getFileLength(std::ifstream &fin) {
+			fin.seekg(0, std::ios::end);
+
+			return (int) fin.tellg();
+		}
+
+		std::string HttpRequestHandler::getFileExtension(std::string path) {
+			size_t lastSlashPos = path.find_last_of("/");
+			size_t lastDotPos = path.find_last_of(".");
+			std::string extension;
+
+			if (lastDotPos != std::string::npos && lastDotPos > lastSlashPos) {
+				extension = path.substr(lastDotPos + 1);
+			}
+
+			return extension;
 		}
 
 		bool HttpRequestHandler::urlDecode(const std::string &in, std::string *out) {

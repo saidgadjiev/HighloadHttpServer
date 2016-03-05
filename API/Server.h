@@ -9,10 +9,6 @@
 #include <event2/listener.h>
 #include <event2/bufferevent.h>
 #include <event2/buffer.h>
-#include "HttpResponse.h"
-#include "HttpRequest.h"
-#include "MimeType.h"
-#include "HttpRequestParser.h"
 
 namespace http {
     namespace server {
@@ -30,10 +26,8 @@ namespace http {
             static void read_cb(struct bufferevent *bev, void *ctx);
             static void write_cb(struct bufferevent *bev, void *ctx);
             static void event_cb(struct bufferevent* bev, short events, void* ctx);
-            static void accept_error_cb(struct evconnlistener* listener,
-                                        void *ctx);
+            static void accept_error_cb(struct evconnlistener* listener, void *ctx);
         private:
-            static void SIGINTHandler(evutil_socket_t sig, short events, void *user_data);
             int port_;
         };
     }

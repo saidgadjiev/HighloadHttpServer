@@ -5,8 +5,8 @@
 #ifndef HTTPSERVER_HTTPREQUEST_H
 #define HTTPSERVER_HTTPREQUEST_H
 
-#include "Header.h"
-#include "QueryParameter.h"
+#include "NameValue.h"
+#include "NameValue.h"
 #include <vector>
 #include <cstring>
 
@@ -17,26 +17,23 @@ namespace http {
             HttpRequest() {}
             ~HttpRequest() {}
 
-            std::string& getMethod();
-            std::string& getUri();
-            std::vector<Header>& getHeaders();
-            std::vector<QueryParameter>& getQueryParameters();
+            std::string getMethod();
+            std::string getUri();
+            std::vector<NameValue>& getHeaders();
+            std::vector<NameValue>& getQueryParameters();
             int getHttpVersionMajor() const;
             int getHttpVersionMinor() const;
-            void setMethod(std::string method);
-            void setUri(std::string uri);
-            void setHeader(Header header, int i);
-            void setQueryParameter(QueryParameter parameter, int i);
-            void addHeader(Header header);
-            void addQueryParameter(QueryParameter parameter);
+            void addHeader(NameValue header);
+            void addQueryParameter(NameValue parameter);
             void setHttpVersionMajor(int httpVersionMajor);
             void setHttpVersionMinor(int httpVersionMinor);
             void pushBackMethod(char ch);
+            void pushBackUri(char ch);
         private:
             std::string method_;
             std::string uri_;
-            std::vector<Header> headers_;
-            std::vector<QueryParameter> queryParameters_;
+            std::vector<NameValue> headers_;
+            std::vector<NameValue> queryParameters_;
             int httpVersionMajor_;
             int httpVersionMinor_;
         };

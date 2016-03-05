@@ -5,6 +5,7 @@
 #include <event2/http.h>
 #include "Server.h"
 #include "HttpRequestHandler.h"
+#include "HttpRequestParser.h"
 
 INITIALIZE_EASYLOGGINGPP
 
@@ -28,11 +29,8 @@ namespace http {
             requestParser.reset();
             requestParser.parse(request, data, length);
             HttpRequestHandler requestHandler(".");
-
             requestHandler.handleRequest(&request, &response);
-
             evbuffer_add(bufferevent_get_output(bev), response.toString().c_str(), response.toString().length());
-            //bufferevent_free(bev);
 
             delete[] data;
         }
@@ -54,11 +52,19 @@ namespace http {
 
         void Server::accept_error_cb(struct evconnlistener *listener, void *ctx) {
             struct event_base *base = evconnlistener_get_base(listener);
-
             int err = EVUTIL_SOCKET_ERROR();
 
             LOG(ERROR) << "Error: " << err << "=" << evutil_socket_error_to_string(err);
             event_base_loopexit(base, NULL);
+        }
+
+        static void SIGINTHandler(evutil_socket_t sig, short events, void *user_data) {
+            struct event_base *base = (struct event_base*)user_data;
+            struct timeval delay = {1, 0};
+
+            LOG(INFO) << "Server shutdown";
+
+            event_base_loopexit(base, &delay);
         }
 
         void Server::accept_conn_cb(struct evconnlistener *listener,
@@ -95,16 +101,8 @@ namespace http {
             if (!signal_event || event_add(signal_event, NULL) < 0) {
                 LOG(INFO) << "Could not create/add a signal event!";
             }
+            LOG(INFO) << "Server start";
             event_base_dispatch(eventBase);
-        }
-
-        void Server::SIGINTHandler(evutil_socket_t sig, short events, void *user_data) {
-            struct event_base *base = (struct event_base*)user_data;
-            struct timeval delay = {1, 0};
-
-            LOG(INFO) << "Caught an interrupt signal; exiting cleanly in one second!";
-
-            event_base_loopexit(base, &delay);
         }
     }
 }
