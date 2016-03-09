@@ -1,3 +1,4 @@
+#include <iostream>
 #include "API/Server.h"
 
 using namespace http::server;

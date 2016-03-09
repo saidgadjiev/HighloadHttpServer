@@ -62,8 +62,6 @@ namespace http {
             struct event_base *base = (struct event_base*)user_data;
             struct timeval delay = {1, 0};
 
-            LOG(INFO) << "Server shutdown";
-
             event_base_loopexit(base, &delay);
         }
 
@@ -103,6 +101,9 @@ namespace http {
             }
             LOG(INFO) << "Server start";
             event_base_dispatch(eventBase);
+            event_base_free(eventBase);
+
+            LOG(INFO) << "Server shutdown";
         }
     }
 }
