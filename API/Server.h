@@ -15,7 +15,7 @@ namespace http {
     namespace server {
         class Server {
         public:
-            Server(int port);
+            Server(int port, int numThread);
             ~Server();
 
             void start();

@@ -3,10 +3,7 @@
 //
 
 
-#include <easylogging++.h>
 #include "Workqueue.h"
-
-INITIALIZE_EASYLOGGINGPP
 
 namespace http {
 	namespace server {
@@ -56,10 +53,7 @@ namespace http {
 
 		Workqueue::Workqueue()
 			: workqueue(new workqueue_t)
-		{
-			el::Loggers::reconfigureAllLoggers(el::ConfigurationType::Format,
-											   "%level %datetime{%H:%m:%s} (%func): %msg");
-		}
+		{ }
 
 		Workqueue::~Workqueue() {
 			delete workqueue;
@@ -78,11 +72,11 @@ namespace http {
 			workqueue->jobs_mutex = blank_mutex;
 			workqueue->jobs_cond = blank_cond;
 
-			for (int i = 0; i < numWorkers; i++) {
-				worker_t *worker = new worker;
+			for (int i = 0; i < numWorkers; ++i) {
+				worker_t *worker = new worker_t;
 				worker->workqueue = workqueue;
 				if (pthread_create(&worker->thread, &attr, worker_function, (void *) worker)) {
-					LOG(ERROR) << "Failed to start all worker threads!";
+					std::cerr << "Failed to start all worker threads!" << std::endl;
 					delete worker;
 					pthread_attr_destroy(&attr);
 
@@ -99,11 +93,11 @@ namespace http {
 			for (worker_t *worker = workqueue->workers; worker != NULL; worker = worker->next) {
 				worker->terminate = 1;
 			}
-			pthread_mutex_lock(&workqueue->jobs_mutex);
+			/*pthread_mutex_lock(&workqueue->jobs_mutex);
 			workqueue->workers = NULL;
 			workqueue->waiting_jobs = NULL;
 			pthread_cond_broadcast(&workqueue->jobs_cond);
-			pthread_mutex_unlock(&workqueue->jobs_mutex);
+			pthread_mutex_unlock(&workqueue->jobs_mutex);*/
 		}
 
 		void Workqueue::addJob(job_t *job) {

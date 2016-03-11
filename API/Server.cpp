@@ -11,10 +11,11 @@ INITIALIZE_EASYLOGGINGPP
 
 namespace http {
     namespace server {
-        Server::Server(int port)
+        Server::Server(int port, int numThread)
                 : port_(port) {
             el::Loggers::reconfigureAllLoggers(el::ConfigurationType::Format,
                                                "%level %datetime{%H:%m:%s} (%func): %msg");
+            workqueue.init(numThread);
         }
 
         Server::~Server() {
@@ -88,11 +89,6 @@ namespace http {
             sin.sin_family = AF_INET;
             sin.sin_port = htons(port_);
             sin.sin_addr.s_addr = INADDR_ANY;
-            if (workqueue.init(1)) {
-                LOG(ERROR) << "Error workerqueue init!";
-
-                return;
-            }
 
             struct evconnlistener *listener = evconnlistener_new_bind(eventBase,
                                                                       accept_conn_cb,
