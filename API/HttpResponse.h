@@ -8,7 +8,7 @@
 
 #include <vector>
 #include <cstring>
-#include "NameValue.h"
+#include "PairNameValue.h"
 #include <sstream>
 #include <assert.h>
 
@@ -39,16 +39,16 @@ namespace http {
                 SERVICE_UNAVAILABLE = 503
             };
             static HttpResponse stockReply(StatusType status);
-            std::vector<NameValue> getHeaders() const;
+            std::vector<PairNameValue> getHeaders() const;
             std::string getContent() const;
             StatusType getStatus() const;
-            void addHeader(NameValue header);
+            void addHeader(PairNameValue header);
             void setContent(std::string content);
             void contentAppend(char buff[], unsigned long size);
             void setStatus(StatusType status);
             std::string toString();
         private:
-            std::vector<NameValue> headers_;
+            std::vector<PairNameValue> headers_;
             std::string content_;
             StatusType status_;
         };

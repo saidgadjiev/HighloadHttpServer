@@ -3,6 +3,7 @@
 //
 
 #include "HttpRequestHandler.h"
+#include "DateTimeHelper.h"
 
 namespace http {
 	namespace server {
@@ -36,6 +37,7 @@ namespace http {
 				indexFile = true;
 			}
 			std::string fullPath = docRoot_ + resoursePath;
+			std::cout << fullPath << std::endl;
 
 			if (access(fullPath.c_str(), 0) == -1) {
 				if (indexFile) {
@@ -58,11 +60,12 @@ namespace http {
 				writeContentToRequest(fin, response);
 			}
 			response->setStatus(HttpResponse::OK);
-			response->addHeader(NameValue("Server", "libevent|C++"));
-			response->addHeader(NameValue("Content-Length", std::to_string(getFileLength(fin))));
-			response->addHeader(NameValue("Content-Type", mime_types::extensionToType(getFileExtension(resoursePath))));
-			response->addHeader(NameValue("Connection", "close"));
-			response->addHeader(NameValue("Allow", "GET | HEAD"));
+			response->addHeader(PairNameValue("Date", DateTimeHelper::getDateHeader()));
+			response->addHeader(PairNameValue("Server", "libevent|C++"));
+			response->addHeader(PairNameValue("Content-Length", std::to_string(getFileLength(fin))));
+			response->addHeader(PairNameValue("Content-Type", mime_types::extensionToType(getFileExtension(resoursePath))));
+			response->addHeader(PairNameValue("Connection", "close"));
+			response->addHeader(PairNameValue("Allow", "GET | HEAD"));
 		}
 
 		bool HttpRequestHandler::isAllowMethod(std::string method) {

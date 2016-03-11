@@ -15,11 +15,11 @@ namespace http {
             return uri_;
         }
 
-        std::vector<NameValue>& HttpRequest::getHeaders(){
+        std::vector<PairNameValue>& HttpRequest::getHeaders(){
             return headers_;
         }
 
-        void HttpRequest::addHeader(NameValue header) {
+        void HttpRequest::addHeader(PairNameValue header) {
             headers_.push_back(header);
         }
 
@@ -43,11 +43,11 @@ namespace http {
             method_.push_back(ch);
         }
 
-        std::vector<NameValue> &HttpRequest::getQueryParameters() {
+        std::vector<PairNameValue> &HttpRequest::getQueryParameters() {
             return queryParameters_;
         }
 
-        void HttpRequest::addQueryParameter(NameValue parameter) {
+        void HttpRequest::addQueryParameter(PairNameValue parameter) {
             queryParameters_.push_back(parameter);
         }
 

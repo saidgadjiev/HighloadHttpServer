@@ -9,9 +9,9 @@
 
 namespace http {
 	namespace server {
-		struct NameValue {
-			NameValue() {}
-			NameValue(std::string name, std::string value)
+		struct PairNameValue {
+			PairNameValue() {}
+			PairNameValue(std::string name, std::string value)
 					: name(name),
 					  value(value)
 			{}
