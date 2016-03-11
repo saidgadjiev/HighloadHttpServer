@@ -6,5 +6,5 @@ set(CMAKE_RUNTIME_OUTPUT_DIRECTORY "/Users/said/Desktop/Study/AttempProgramming/
 
 set(SOURCE_FILES main.cpp API/Server.cpp API/Server.h API/MimeType.cpp API/MimeType.h API/PairNameValue.h API/HttpResponse.cpp
         API/HttpResponse.h API/HttpRequest.cpp API/HttpRequest.h API/HttpRequestParser.cpp API/HttpRequestParser.h
-        API/HttpRequestHandler.cpp API/HttpRequestHandler.h API/WorkQueue.cpp API/WorkQueue.h API/PairNameValue.h API/DateTimeHelper.h)
+        API/HttpRequestHandler.cpp API/HttpRequestHandler.h API/Workqueue.cpp API/Workqueue.h API/PairNameValue.h API/DateTimeHelper.h)
 add_executable(HttpServer ${SOURCE_FILES})

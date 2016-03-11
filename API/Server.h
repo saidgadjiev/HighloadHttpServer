@@ -9,13 +9,14 @@
 #include <event2/listener.h>
 #include <event2/bufferevent.h>
 #include <event2/buffer.h>
+#include "Workqueue.h"
 
 namespace http {
     namespace server {
         class Server {
         public:
             Server(int port);
-            ~Server() { }
+            ~Server();
 
             void start();
             static void accept_conn_cb(struct evconnlistener* listener,
@@ -28,6 +29,7 @@ namespace http {
             static void event_cb(struct bufferevent* bev, short events, void* ctx);
             static void accept_error_cb(struct evconnlistener* listener, void *ctx);
         private:
+            Workqueue workqueue;
             int port_;
         };
     }

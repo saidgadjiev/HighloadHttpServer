@@ -2,7 +2,7 @@
 // Created by Саид on 14.02.16.
 //
 
-#include <event2/http.h>
+#include <event2/thread.h>
 #include "Server.h"
 #include "HttpRequestHandler.h"
 #include "HttpRequestParser.h"
@@ -15,6 +15,10 @@ namespace http {
                 : port_(port) {
             el::Loggers::reconfigureAllLoggers(el::ConfigurationType::Format,
                                                "%level %datetime{%H:%m:%s} (%func): %msg");
+        }
+
+        Server::~Server() {
+            workqueue.shutdown();
         }
 
         void Server::read_cb(struct bufferevent *bev, void *ctx) {
@@ -84,6 +88,11 @@ namespace http {
             sin.sin_family = AF_INET;
             sin.sin_port = htons(port_);
             sin.sin_addr.s_addr = INADDR_ANY;
+            if (workqueue.init(1)) {
+                LOG(ERROR) << "Error workerqueue init!";
+
+                return;
+            }
 
             struct evconnlistener *listener = evconnlistener_new_bind(eventBase,
                                                                       accept_conn_cb,
