@@ -37,7 +37,6 @@ namespace http {
 				indexFile = true;
 			}
 			std::string fullPath = docRoot_ + resoursePath;
-			std::cout << fullPath << std::endl;
 
 			if (access(fullPath.c_str(), 0) == -1) {
 				if (indexFile) {
