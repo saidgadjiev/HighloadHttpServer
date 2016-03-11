@@ -66,7 +66,7 @@ namespace http {
 					}
 				case query_param_start:
 					state_ = query_param_name;
-					request.getQueryParameters().push_back(NameValue());
+					request.getQueryParameters().push_back(PairNameValue());
 					request.getQueryParameters().back().name.push_back(input);
 
 					return indeterminate;
@@ -189,7 +189,7 @@ namespace http {
 					} else if (!isChar(input) || isCtl(input) || isTspecial(input)) {
 						return bad;
 					} else {
-						request.getHeaders().push_back(NameValue());
+						request.getHeaders().push_back(PairNameValue());
 						request.getHeaders().back().name.push_back(input);
 						state_ = header_name;
 

@@ -3,6 +3,7 @@
 //
 
 #include "HttpResponse.h"
+#include "DateTimeHelper.h"
 
 namespace http {
     namespace server {
@@ -215,7 +216,7 @@ namespace http {
         HttpResponse::HttpResponse()
         { }
 
-        std::vector<NameValue> HttpResponse::getHeaders() const {
+        std::vector<PairNameValue> HttpResponse::getHeaders() const {
             return headers_;
         }
 
@@ -227,7 +228,7 @@ namespace http {
             return status_;
         }
 
-        void HttpResponse::addHeader(NameValue header) {
+        void HttpResponse::addHeader(PairNameValue header) {
             headers_.push_back(header);
         }
 
@@ -244,11 +245,12 @@ namespace http {
 
             resp.setStatus(status);
             resp.setContent(stock_replies::toString(status));
-            resp.addHeader(NameValue("Server", "libevent|C++"));
-            resp.addHeader(NameValue("Content-Length", std::to_string(resp.getContent().size())));
-            resp.addHeader(NameValue("Content-Type", "text/html"));
-            resp.addHeader(NameValue("Connection", "close"));
-            resp.addHeader(NameValue("Allow", "GET | HEAD"));
+            resp.addHeader(PairNameValue("Date", DateTimeHelper::getDateHeader()));
+            resp.addHeader(PairNameValue("Server", "libevent|C++"));
+            resp.addHeader(PairNameValue("Content-Length", std::to_string(resp.getContent().size())));
+            resp.addHeader(PairNameValue("Content-Type", "text/html"));
+            resp.addHeader(PairNameValue("Connection", "close"));
+            resp.addHeader(PairNameValue("Allow", "GET | HEAD"));
 
             return resp;
         }
