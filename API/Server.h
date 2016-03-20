@@ -10,27 +10,32 @@
 #include <event2/bufferevent.h>
 #include <event2/buffer.h>
 #include "Workqueue.h"
+#include <event2/thread.h>
+#include "HttpRequestHandler.h"
+#include "HttpRequestParser.h"
+#include "Client.h"
 
 namespace http {
     namespace server {
-        class Server {
+        class HttpServer
+        {
         public:
-            Server(int port, int numThread);
-            ~Server();
+            HttpServer();
+            virtual ~HttpServer();
+            void startServer(int port, int nCPU, char *rootDir);
 
-            void start();
-            static void accept_conn_cb(struct evconnlistener* listener,
-                                       evutil_socket_t fd,
-                                       struct sockaddr* address,
-                                       int socklen,
-                                       void *ctx);
-            static void read_cb(struct bufferevent *bev, void *ctx);
-            static void write_cb(struct bufferevent *bev, void *ctx);
-            static void event_cb(struct bufferevent* bev, short events, void* ctx);
-            static void accept_error_cb(struct evconnlistener* listener, void *ctx);
         private:
-            Workqueue workqueue;
-            int port_;
+            static void acceptConnCb(struct evconnlistener *listener,
+                                     evutil_socket_t fd, struct sockaddr *address, int socklen,
+                                     void *ctx);
+            static void acceptErrorCb(struct evconnlistener *listener, void *ctx);
+            static void readCb(struct bufferevent *bev, void *ctx);
+            static void eventCb(struct bufferevent *bev, short events, void *ctx);
+            static void serverJobFunction(struct job *job);
+            static void writeCb(bufferevent *bev, void *ctx);
+
+            static workqueue_t workqueue;
+            static char *rootDir_;
         };
     }
 }

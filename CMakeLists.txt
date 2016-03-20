@@ -1,7 +1,7 @@
 cmake_minimum_required(VERSION 3.3)
 project(HttpServer)
 
-set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++11 -levent")
+set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++11 -levent -lpthread -levent_pthreads")
 set(CMAKE_RUNTIME_OUTPUT_DIRECTORY "/Users/said/Desktop/Study/AttempProgramming/CProject/HttpServer")
 
 set(SOURCE_FILES main.cpp API/Server.cpp API/Server.h API/MimeType.cpp API/MimeType.h API/PairNameValue.h API/HttpResponse.cpp
