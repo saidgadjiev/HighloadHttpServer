@@ -13,7 +13,7 @@
 class DateTimeHelper {
 public:
 	static std::string getDayName(int dayNumber) {
-		assert(dayNumber < 7 && dayNumber > 0);
+		assert(dayNumber < 7);
 		static std::string wdayName[7] =
 				{"Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"};
 
