@@ -5,7 +5,7 @@ using namespace http::server;
 int main(int argc, char *argv[]) {
 	int port = 0;
 	int nCPU = 0;
-	char *rootDir = 0;
+	char *rootDir = nullptr;
 	int c = 0;
 
 	while ((c = getopt (argc, argv, "p:n:r:")) != -1) {

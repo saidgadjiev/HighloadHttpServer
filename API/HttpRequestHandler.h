@@ -9,7 +9,7 @@
 #include "HttpResponse.h"
 #include "MimeType.h"
 #include <fstream>
-#include <easylogging++.h>
+#include <unistd.h>
 
 namespace http {
 	namespace server {
