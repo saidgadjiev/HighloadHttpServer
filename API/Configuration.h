@@ -8,9 +8,10 @@
 class Configuration {
 public:
 	static const int PORT = 8000;
-	static const int nCPU = 4;
+	static const int nCPU = 1;
 	static char *ROOT_DIR;
 };
 
+char *Configuration::ROOT_DIR = (char *) ".";
 
 #endif //HTTPSERVER_CONFIGURATION_H
